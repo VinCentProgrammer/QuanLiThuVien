@@ -13,16 +13,11 @@ typedef struct Ngay
     char nam[5];
 } Ngay;
 
-typedef struct ThongTinSach
-{
-    char tenSach[100];
-} ThongTinSach;
-
 typedef struct TrangThaiDoc
 {
     Ngay ngayMuon;
     Ngay ngayTra;
-    ThongTinSach thongTinSach[3];
+    char danhSachSach[1000];
     int slSachMuon;
 } trangThai;
 
@@ -32,6 +27,7 @@ typedef struct SinhVien
     char hoVaTen[50]; // Ha Van Dung
     char lopHoc[100]; // CNTT-K63
     trangThai trangThaiDoc;
+    int active;
 } sinhVien;
 
 sinhVien danhSachSinhVien[1000];
@@ -130,7 +126,6 @@ void nhapLopHoc(sinhVien *sv)
         }
     } while (!ktLopHoc(sv->lopHoc));
 }
-
 void xoaChuoi(char *chuoi)
 {
     for (int i = 0; i < strlen(chuoi); i++)
@@ -139,7 +134,6 @@ void xoaChuoi(char *chuoi)
     }
     xoaXuongDong(chuoi);
 }
-
 void nhapNgayMuon(sinhVien *sv)
 {
     char strNgay[3];
@@ -189,7 +183,6 @@ void nhapNgayMuon(sinhVien *sv)
         }
     } while (ok == 0);
 }
-
 int ktSachCoHeThong(Sach sach[], int slDauSach, char *tenSach)
 {
     for (int i = 1; i <= slDauSach; i++)
@@ -205,6 +198,7 @@ int ktSachCoHeThong(Sach sach[], int slDauSach, char *tenSach)
 
 void nhapThongTinSachMuon(sinhVien *sv, Sach sach[], int slDauSach)
 {
+
     hienThiDanhSachSach(danhSachSach, slDauSach);
     printf("\n");
 
@@ -234,14 +228,16 @@ void nhapThongTinSachMuon(sinhVien *sv, Sach sach[], int slDauSach)
         } while (!ktTenSach(tenSach));
 
         int check = 0;
-        for (int j = 0; j < slDauSach; j++)
+        for (int j = 1; j <= slDauSach; j++)
         {
             if (strcmp(sach[j].tenSach, tenSach) == 0)
             {
                 check = 1;
-                strcpy(sv->trangThaiDoc.thongTinSach[i].tenSach, tenSach);
+                strcat(sv->trangThaiDoc.danhSachSach, tenSach);
+                if (i != sv->trangThaiDoc.slSachMuon)
+                    strcat(sv->trangThaiDoc.danhSachSach, " & ");
+
                 sach[j].slSachHienCo -= 1;
-                break;
             }
         }
 
@@ -253,6 +249,7 @@ void nhapThongTinSachMuon(sinhVien *sv, Sach sach[], int slDauSach)
         }
         else
         {
+            sv->active = 1;
             printf("\n+----------------------------------------------------------------------------+");
             printf("\n|                         Muon sach thanh cong !!!                           |");
             printf("\n+----------------------------------------------------------------------------+\n\n");
@@ -269,12 +266,16 @@ sinhVien nhapThongTinSinhVien()
     nhapMssv(&svTmp);
     // Nhap ho va ten
     nhapHoVaTen(&svTmp);
-    // Nhap lop hoc
+    // // Nhap lop hoc
     nhapLopHoc(&svTmp);
-    // Nhap ngay thang nam muon sach
+    // // Nhap ngay thang nam muon sach
     nhapNgayMuon(&svTmp);
-    // Nhap ten sach muon muon
+    // // Nhap ten sach muon muon
     nhapThongTinSachMuon(&svTmp, danhSachSach, slDauSach);
+
+    if (svTmp.active == 1)
+        ++slsv;
+
     return svTmp;
 }
 
@@ -285,14 +286,7 @@ void lietKeSV(sinhVien sv[], int slsv)
     {
         if (ktMssv(sv[i].mssv))
         {
-            char tenSachMuon[3][50];
-
-            for (int k = 1; k <= sv[i].trangThaiDoc.slSachMuon; k++)
-            {
-                strcpy(tenSachMuon[i], sv[i].trangThaiDoc.thongTinSach[k].tenSach);
-            }
-
-            printf("\n   |%-10s|%-40s|%-20s|%-5s/%-5s/%-5s|%-10s, %-10s, %-10s|", sv[i].mssv, sv[i].hoVaTen, sv[i].lopHoc, sv[i].trangThaiDoc.ngayMuon.ngay, sv[i].trangThaiDoc.ngayMuon.thang, sv[i].trangThaiDoc.ngayMuon.nam, (sv[i].trangThaiDoc.thongTinSach[1].tenSach != NULL) ? sv[i].trangThaiDoc.thongTinSach[1].tenSach : "0", (sv[i].trangThaiDoc.thongTinSach[2].tenSach != NULL) ? sv[i].trangThaiDoc.thongTinSach[2].tenSach : "0", (sv[i].trangThaiDoc.thongTinSach[3].tenSach != NULL) ? sv[i].trangThaiDoc.thongTinSach[3].tenSach : "0");
+            printf("\n|%-19s|%-28s|%-20s|%-7s/%-7s/%-7s|%-35s|", sv[i].mssv, sv[i].hoVaTen, sv[i].lopHoc, sv[i].trangThaiDoc.ngayMuon.ngay, sv[i].trangThaiDoc.ngayMuon.thang, sv[i].trangThaiDoc.ngayMuon.nam, sv[i].trangThaiDoc.danhSachSach);
         }
     }
 }
@@ -301,11 +295,11 @@ void hienThiSV(sinhVien sv[], int slsv)
 {
     if (slsv != 0)
     {
-        printf("   +--------------------------------------------------------------------------------------------------------+");
-        printf("\n   | Mssv |     Ho Va Ten         |    Lop Hoc    |   Ngay muon sach    |             Sach muon             |\n");
-        printf("   +--------------------------------------------------------------------------------------------------------+");
+        printf("\n+---------------------------------------------------------------------------------------------------------------------------------+");
+        printf("\n|       Mssv        |         Ho Va Ten          |      Lop Hoc       |    Ngay muon sach     |             Sach muon             |");
+        printf("\n+---------------------------------------------------------------------------------------------------------------------------------+");
         lietKeSV(sv, slsv);
-        printf("\n   +--------------------------------------------------------------------------------------------------------+");
+        printf("\n+---------------------------------------------------------------------------------------------------------------------------------+");
     }
     else
         printf("Chua co sinh vien muon sach!!!\n");
@@ -316,7 +310,7 @@ void sapXepTheoTenSvGiamDan(sinhVien sv[], int slsv)
 {
     if (slsv != 0)
     {
-        printf("\n +------------------------------------------Truoc sap xep giam dan----------------------------------------+\n");
+        printf("\n+-----------------------------------------------------Truoc sap xep giam dan------------------------------------------------------+\n");
         hienThiSV(danhSachSinhVien, slsv);
         for (int i = 1; i <= slsv - 1; i++)
         {
@@ -332,7 +326,7 @@ void sapXepTheoTenSvGiamDan(sinhVien sv[], int slsv)
             }
         }
         printf("\n");
-        printf("\n +------------------------------------------Sau sap xep giam dan------------------------------------------+\n");
+        printf("\n+-----------------------------------------------------Sau sap xep giam dan------------------------------------------------------+\n");
         hienThiSV(danhSachSinhVien, slsv);
     }
     else
@@ -343,7 +337,7 @@ void sapXepTheoTenSvTangDan(sinhVien sv[], int slsv)
 {
     if (slsv != 0)
     {
-        printf("\n +------------------------------------------Truoc sap xep tang dan----------------------------------------+\n");
+        printf("\n+-----------------------------------------------------Truoc sap xep tang dan------------------------------------------------------+\n");
         hienThiSV(danhSachSinhVien, slsv);
         for (int i = 1; i <= slsv - 1; i++)
         {
@@ -359,7 +353,7 @@ void sapXepTheoTenSvTangDan(sinhVien sv[], int slsv)
             }
         }
         printf("\n");
-        printf("\n +------------------------------------------Sau sap xep tang dan------------------------------------------+\n");
+        printf("\n+-----------------------------------------------------Sau sap xep tang dan------------------------------------------------------+\n");
         hienThiSV(danhSachSinhVien, slsv);
     }
     else
@@ -372,6 +366,7 @@ void timKiemSvTheoMssv(sinhVien sv[], int slsv)
     if (slsv != 0)
     {
         hienThiSV(danhSachSinhVien, slsv);
+        printf("\n");
 
         // Nhap ma so sinh vien
         char mssv[20];
@@ -417,6 +412,7 @@ void timKiemSvTheoTen(sinhVien sv[], int slsv)
     if (slsv != 0)
     {
         hienThiSV(danhSachSinhVien, slsv);
+        printf("\n");
 
         // Nhap ten sinh vien
         char tenSinhVien[50];
@@ -578,16 +574,10 @@ void ghiSvVaoFile(sinhVien sv[], int slsv)
             printf("Loi mo hoac tao file \n");
             exit(1);
         }
+        fprintf(f, "%d\n", slsv);
         for (int i = 1; i <= slsv; i++)
         {
-            char tenSachMuon[3][50];
-
-            for (int k = 1; k <= sv[i].trangThaiDoc.slSachMuon; k++)
-            {
-                strcpy(tenSachMuon[i], sv[i].trangThaiDoc.thongTinSach[k].tenSach);
-            }
-
-            fprintf(f, "\n   |%-10s|%-40s|%-20s|%-5s/%-5s/%-5s|%-10s, %-10s, %-10s|", sv[i].mssv, sv[i].hoVaTen, sv[i].lopHoc, sv[i].trangThaiDoc.ngayMuon.ngay, sv[i].trangThaiDoc.ngayMuon.thang, sv[i].trangThaiDoc.ngayMuon.nam, (sv[i].trangThaiDoc.thongTinSach[1].tenSach != NULL) ? sv[i].trangThaiDoc.thongTinSach[1].tenSach : "0", (sv[i].trangThaiDoc.thongTinSach[2].tenSach != NULL) ? sv[i].trangThaiDoc.thongTinSach[2].tenSach : "0", (sv[i].trangThaiDoc.thongTinSach[3].tenSach != NULL) ? sv[i].trangThaiDoc.thongTinSach[3].tenSach : "0");
+            fprintf(f, "\n|%-19s|%-28s|%-20s|%-7s/%-7s/%-7s|%-35s|", sv[i].mssv, sv[i].hoVaTen, sv[i].lopHoc, sv[i].trangThaiDoc.ngayMuon.ngay, sv[i].trangThaiDoc.ngayMuon.thang, sv[i].trangThaiDoc.ngayMuon.nam, sv[i].trangThaiDoc.danhSachSach);
         }
 
         fclose(f);

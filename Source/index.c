@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <conio.h>
 #include <time.h>
 #include <stdlib.h>
 #include <windows.h>
@@ -7,7 +8,6 @@
 #include "Module_User/main.c"
 
 int mainMenu();
-
 
 int main()
 {
@@ -25,6 +25,7 @@ int main()
                 printf("\n|              DANG NHAP THANH CONG (X_X)                  |");
                 printf("\n+----------------------------------------------------------+\n\n");
                 kiemTraThoiGian = false;
+                thoat();
                 break;
             }
             else
@@ -33,6 +34,7 @@ int main()
                 printf("\n+----------------------------------------------------------+");
                 printf("\n|              DANG NHAP KHONG THANH CONG (u_u)            |");
                 printf("\n+----------------------------------------------------------+\n\n");
+                thoat();
             }
         }
 
@@ -107,8 +109,6 @@ int main()
         return 0;
     }
 }
-
-
 
 int mainMenu()
 {

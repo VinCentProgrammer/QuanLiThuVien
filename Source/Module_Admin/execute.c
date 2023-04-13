@@ -1,6 +1,7 @@
 // File xây dựng function - Admin
 
 #include <stdio.h>
+#include <conio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
@@ -64,10 +65,12 @@ void xoaSachTheoMa(Sach sach[], int *slDauSach);
 
 int ktTenFile(char *tenFile);
 void ghiSachVaoFile(Sach sach[], int slDauSach);
+void docSachTuFile(Sach sach[], int slDauSach);
 
 // Ham menu
 int MenuSach();
 
+void thoat();
 
 int functionMainAdmin()
 {
@@ -78,35 +81,49 @@ int functionMainAdmin()
         {
         case 1:
             danhSachSach[++slDauSach] = nhapThongTinSach();
+            thoat();
             break;
         case 2:
             hienThiDanhSachSach(danhSachSach, slDauSach);
+            thoat();
             break;
         case 3:
             sapXepTheoTenSachTangDan(danhSachSach, slDauSach);
+            thoat();
             break;
         case 4:
             sapXepTheoTenSachGiamDan(danhSachSach, slDauSach);
+            thoat();
             break;
         case 5:
             timKiemTheoTheLoai(danhSachSach, slDauSach);
+            thoat();
             break;
         case 6:
             timKiemTheoMa(danhSachSach, slDauSach);
+            thoat();
             break;
         case 7:
             capNhapSachThem(danhSachSach, slDauSach);
+            thoat();
             break;
         case 8:
             capNhapSachBot(danhSachSach, slDauSach);
+            thoat();
             break;
         case 9:
             xoaSachTheoMa(danhSachSach, &slDauSach);
+            thoat();
             break;
         case 10:
             ghiSachVaoFile(danhSachSach, slDauSach);
+            thoat();
             break;
         case 11:
+            docSachTuFile(danhSachSach, slDauSach);
+            thoat();
+            break;
+        case 12:
             goto dieuHuongRaMainMenu;
         case 0:
             goto dieuHuongRaMainMenuDeThoat;
@@ -120,9 +137,12 @@ dieuHuongRaMainMenuDeThoat:
     return -1;
 }
 
-
-
-
+void thoat()
+{
+    printf("\nNhan Enter de tiep tuc!\n");
+    getch();
+    system("cls");
+}
 
 // Ham Xu Li Chuoi
 void xoaXuongDong(char c[])
@@ -365,7 +385,7 @@ void sapXepTheoTenSachGiamDan(Sach sach[], int slDauSach)
 {
     if (slDauSach != 0)
     {
-        printf("\n +------------------------------------------Truoc sap xep giam dan----------------------------------------+\n");
+        printf("\n    +------------------------------------------Truoc sap xep giam dan----------------------------------------+\n");
         hienThiDanhSachSach(danhSachSach, slDauSach);
         for (int i = 1; i <= slDauSach - 1; i++)
         {
@@ -381,7 +401,7 @@ void sapXepTheoTenSachGiamDan(Sach sach[], int slDauSach)
             }
         }
         printf("\n");
-        printf("\n +------------------------------------------Sau sap xep giam dan------------------------------------------+\n");
+        printf("\n    +------------------------------------------Sau sap xep giam dan------------------------------------------+\n");
         hienThiDanhSachSach(danhSachSach, slDauSach);
     }
     else
@@ -392,7 +412,7 @@ void sapXepTheoTenSachTangDan(Sach sach[], int slDauSach)
 {
     if (slDauSach != 0)
     {
-        printf("\n +------------------------------------------Truoc sap xep tang dan----------------------------------------+\n");
+        printf("\n    +------------------------------------------Truoc sap xep tang dan----------------------------------------+\n");
         hienThiDanhSachSach(danhSachSach, slDauSach);
         for (int i = 1; i <= slDauSach - 1; i++)
         {
@@ -408,7 +428,7 @@ void sapXepTheoTenSachTangDan(Sach sach[], int slDauSach)
             }
         }
         printf("\n");
-        printf("\n +------------------------------------------Sau sap xep tang dan----------------------------------------+\n");
+        printf("\n    +------------------------------------------Sau sap xep tang dan----------------------------------------+\n");
         hienThiDanhSachSach(danhSachSach, slDauSach);
     }
     else
@@ -442,7 +462,7 @@ void timKiemTheoTheLoai(Sach sach[], int slDauSach)
         int ok = 0, k = 0;
         Sach dsTmp[slDauSach];
 
-        for (int i = 0; i < slDauSach; i++)
+        for (int i = 1; i <= slDauSach; i++)
         {
             if (strcmp(sach[i].theLoai, tenTheLoai) == 0)
             {
@@ -489,7 +509,7 @@ void timKiemTheoMa(Sach sach[], int slDauSach)
         int ok = 0, k = 0;
         Sach dsTmp[slDauSach];
 
-        for (int i = 0; i < slDauSach; i++)
+        for (int i = 1; i <= slDauSach; i++)
         {
             if (strcmp(sach[i].maSach, strMaSach) == 0)
             {
@@ -748,6 +768,9 @@ void ghiSachVaoFile(Sach sach[], int slDauSach)
             printf("Loi mo hoac tao file \n");
             exit(1);
         }
+
+        fprintf(f, "%d\n", slDauSach);
+
         for (int i = 1; i <= slDauSach; i++)
         {
             fprintf(f, "\n   |%-10s|%-40s|%-20s|%-20s|%-10d|", sach[i].maSach, sach[i].tenSach, sach[i].tacGia, sach[i].theLoai, sach[i].slSachHienCo);
@@ -757,6 +780,50 @@ void ghiSachVaoFile(Sach sach[], int slDauSach)
     }
     else
         printf("Chua co sach ton tai trong he thong!!!\n");
+}
+
+void docSachTuFile(Sach sach[], int slDauSach)
+{
+    // Nhap ten File muon doc
+
+    char tenFile[100];
+    do
+    {
+        printf("Nhap ten file muon doc: ");
+        fflush(stdin);
+        fgets(tenFile, sizeof(tenFile), stdin);
+        xoaXuongDong(tenFile);
+
+        if (!ktTenFile(tenFile))
+        {
+            printf("\n+----------------------------------------------------------+");
+            printf("\n|   Ten File co dinh dang tenFile.txt hoac tenFile.bin     |");
+            printf("\n+----------------------------------------------------------+\n\n");
+        }
+    } while (!ktTenFile(tenFile));
+
+    FILE *f;
+
+    if (strstr(tenFile, ".txt"))
+    {
+        f = fopen(tenFile, "r");
+    }
+    else
+        f = fopen(tenFile, "rb");
+
+    if (f == NULL)
+    {
+        printf("Khong co file can doc \n");
+        exit(1);
+    }
+
+    fscanf(f, "%d\n", &slDauSach);
+    for (int i = 1; i <= slDauSach; i++)
+    {
+        fscanf(f, "\n   |%-10s|%-40s|%-20s|%-20s|%-10d|", &sach[i].maSach, &sach[i].tenSach, &sach[i].tacGia, &sach[i].theLoai, &sach[i].slSachHienCo);
+    }
+
+    fclose(f);
 }
 
 // Ham menu
@@ -770,9 +837,9 @@ int MenuSach()
     printf("\n	|2. Hien thi danh sach hien co   | 7. Cap nhap sach them         |");
     printf("\n	|3. Sap xep ten sach tang dan    | 8. Cap nhat sach bot          |");
     printf("\n	|4. Sap xep ten sach giam dan    | 9. Xoa sach                   |");
-    printf("\n	|5. Tim kiem theo the loai       |10. Ghi vao File               |");
+    printf("\n	|5. Tim kiem theo the loai       |10. Ghi vao File |11. Doc File |");
     printf("\n	+----------------------------------------------------------------+");
-    printf("\n	|   11. Quay lai Menu chinh      |  0. Thoat chuong trinh        |");
+    printf("\n	|   12. Quay lai Menu chinh      |  0. Thoat chuong trinh        |");
     printf("\n	+----------------------------------------------------------------+");
 
     int chon;
